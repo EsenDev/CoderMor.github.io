@@ -8,7 +8,7 @@
 <div class="main-web">
         <div class="container-box">
             <div class="local-video">
-                <video autoplay playsinline controls id="video"></video>
+                <video autoplay playsinline id="video"></video>
             </div>
         </div>
         <div class="video-container"></div>
@@ -39,7 +39,6 @@
                 var lines = result.toString().split('#')
 
                 lines.forEach(function(value,index,array){
-    　                
                        var info = value.split('\n')
                        var infoDetail = info[0].split(' ')
                        var sMap = new Map()
@@ -69,6 +68,7 @@
 
 
   function playVideo(url) {
+    closeVideo()
     if (Hls.isSupported()) {
       console.log(url)
       var localVideo = document.getElementById('video')
@@ -100,7 +100,6 @@
       if (hls != null) {
         var localVideo = document.getElementById('video')
         localVideo.pause()
-        localVideo.close()
         this.hls.destroy()
         this.hls = null
       }
