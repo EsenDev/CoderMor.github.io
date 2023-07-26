@@ -36,20 +36,20 @@
                     throw new Error('Invalid m3u playlist')
                 }
 
-                var lines = result.toString().split('#')
+                let lines = result.toString().split('#')
 
                 lines.forEach(function(value,index,array){
-                       var info = value.split('\n')
-                       var infoDetail = info[0].split(' ')
-                       var sMap = new Map()
+                       let info = value.split('\n')
+                       let infoDetail = info[0].split(' ')
+                       let sMap = new Map()
                        infoDetail.forEach(function (item) {
-                          var arr = item.split('=')
+                          let arr = item.split('=')
                           sMap.set(arr[0],decodeURIComponent(arr[1]))
                           console.log(arr[0],decodeURIComponent(arr[1]))
                        })
-
-                       if(sMap.get("tvg-logo") != null){
-                          let videoWrapper = $("<div class='tv-row'> <image class='tv-logo' src="+sMap.get("tvg-logo")+"/> <span>"+sMap.get("group-title").split(",")[1]+"</span></div>")
+                       let logo = sMap.get("tvg-logo")
+                       if(logo != null){
+                          let videoWrapper = $("<div class='tv-row'> <image class='tv-logo' src="+logo+"/> <span>"+sMap.get("group-title").split(",")[1]+"</span></div>")
                           $(videoWrapper).bind("click",function(event){
                             playVideo(info[1])
                           })
@@ -71,7 +71,7 @@
     closeVideo()
     if (Hls.isSupported()) {
       console.log(url)
-      var localVideo = document.getElementById('video')
+      let localVideo = document.getElementById('video')
       hls = new Hls()
 
       hls.on(Hls.Events.ERROR, function (event, data) {
@@ -98,7 +98,7 @@
 
   function closeVideo(){
       if (hls != null) {
-        var localVideo = document.getElementById('video')
+        let localVideo = document.getElementById('video')
         localVideo.pause()
         this.hls.destroy()
         this.hls = null
