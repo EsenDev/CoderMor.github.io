@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>TikTok 一件代发定价计算器（自定义货币，人民币结果）</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 700px; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+    th { background-color: #f4f4f4; }
+    input { width: 80px; text-align: right; }
+    .result { font-weight: bold; }
+</style>
+</head>
+<body>
+<h2>TikTok 一件代发定价计算器</h2>
+
+<p>说明：成本可用任意货币输入，输入对应汇率即可自动换算成人民币，结果全部显示人民币</p>
+
+<table>
+<tr><th>成本类别</th><th>说明</th><th>金额</th><th>货币</th><th>汇率 (1单位货币 = ?￥)</th></tr>
+<tr><td>商品成本</td><td>供应商出厂价</td><td><input id="cost" type="number" value="5"></td><td><input id="costCurrency" type="text" value="USD"></td><td><input id="costRate" type="number" value="7"></td></tr>
+<tr><td>包装/定制费</td><td>包装盒、贴标、LOGO等</td><td><input id="package" type="number" value="1"></td><td><input id="packageCurrency" type="text" value="USD"></td><td><input id="packageRate" type="number" value="7"></td></tr>
+<tr><td>国内物流费</td><td>供应商到国内仓/货代费用</td><td><input id="localShip" type="number" value="5"></td><td><input id="localCurrency" type="text" value="CNY"></td><td><input id="localRate" type="number" value="1"></td></tr>
+<tr><td>国际运费</td><td>海外运输到买家</td><td><input id="intlShip" type="number" value="2"></td><td><input id="intlCurrency" type="text" value="USD"></td><td><input id="intlRate" type="number" value="7"></td></tr>
+<tr><td>广告/营销费用</td><td>TikTok广告、达人佣金等</td><td><input id="ads" type="number" value="1"></td><td><input id="adsCurrency" type="text" value="USD"></td><td><input id="adsRate" type="number" value="7"></td></tr>
+<tr><td>退货损耗/售后费用</td><td>退货运费、理赔</td><td><input id="returns" type="number" value="0.5"></td><td><input id="returnsCurrency" type="text" value="USD"></td><td><input id="returnsRate" type="number" value="7"></td></tr>
+<tr><td>其他费用</td><td>备用金、税务预留等</td><td><input id="other" type="number" value="0"></td><td><input id="otherCurrency" type="text" value="CNY"></td><td><input id="otherRate" type="number" value="1"></td></tr>
+<tr><td>平台佣金率 (%)</td><td>TikTok Shop抽佣</td><td><input id="commission" type="number" value="8"></td><td></td><td></td></tr>
+<tr><td>支付手续费率 (%)</td><td>Payoneer / PingPong等</td><td><input id="payFee" type="number" value="3"></td><td></td><td></td></tr>
+<tr><td>目标利润率 (%)</td><td>期望利润率</td><td><input id="profitRate" type="number" value="30"></td><td></td><td></td></tr>
+</table>
+
+<button onclick="calculate()">计算售价与利润（人民币）</button>
+
+<h3>结果（人民币）</h3>
+<p class="result">总成本: ￥<span id="totalCostRMB">0.00</span></p>
+<p class="result">平台佣金: ￥<span id="platformFeeRMB">0.00</span></p>
+<p class="result">支付手续费: ￥<span id="paymentFeeRMB">0.00</span></p>
+<p class="result">最终售价: ￥<span id="finalPriceRMB">0.00</span></p>
+<p class="result">预估利润: ￥<span id="profitRMB">0.00</span></p>
+
+<script>
+function calculate() {
+    // 读取各成本并换算成人民币
+    function toRMB(valueId, rateId) {
+        return parseFloat(document.getElementById(valueId).value) * parseFloat(document.getElementById(rateId).value);
+    }
+
+    let totalCostRMB = toRMB('cost','costRate') + toRMB('package','packageRate') + toRMB('localShip','localRate') +
+                       toRMB('intlShip','intlRate') + toRMB('ads','adsRate') + toRMB('returns','returnsRate') + toRMB('other','otherRate');
+
+    let commissionRate = parseFloat(document.getElementById('commission').value)/100;
+    let payFeeRate = parseFloat(document.getElementById('payFee').value)/100;
+    let profitRate = parseFloat(document.getElementById('profitRate').value)/100;
+
+    let platformFeeRMB = totalCostRMB * commissionRate;
+    let paymentFeeRMB = (totalCostRMB + platformFeeRMB) * payFeeRate;
+    let finalPriceRMB = (totalCostRMB + platformFeeRMB + paymentFeeRMB) / (1 - profitRate);
+    let profitRMB = finalPriceRMB - totalCostRMB - platformFeeRMB - paymentFeeRMB;
+
+    document.getElementById('totalCostRMB').innerText = totalCostRMB.toFixed(2);
+    document.getElementById('platformFeeRMB').innerText = platformFeeRMB.toFixed(2);
+    document.getElementById('paymentFeeRMB').innerText = paymentFeeRMB.toFixed(2);
+    document.getElementById('finalPriceRMB').innerText = finalPriceRMB.toFixed(2);
+    document.getElementById('profitRMB').innerText = profitRMB.toFixed(2);
+}
+</script>
+</body>
+</html>
